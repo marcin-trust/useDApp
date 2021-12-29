@@ -1,5 +1,11 @@
 # @usedapp/core
 
+## 0.7.4
+
+### Patch Changes
+
+- e5f0951: Add multicall2 function
+
 ## 0.7.3
 
 ### Patch Changes
