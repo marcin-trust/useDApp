@@ -1,31 +1,81 @@
-import { useWeb3React } from '@web3-react/core'
-import { Web3Provider } from '@ethersproject/providers'
-import { ChainId } from '../constants'
-import { useCallback } from 'react'
-import { useConfig } from '../providers/config/context'
-import { InjectedConnector } from '@web3-react/injected-connector'
+import { ExternalProvider, JsonRpcProvider } from '@ethersproject/providers'
+import { useConfig, useNetwork } from '../providers'
+import { useReadonlyNetwork } from './useReadonlyProvider'
 
-type ActivateBrowserWallet = (onError?: (error: Error) => void, throwErrors?: boolean) => void
+type MaybePromise<T> = Promise<T> | any
 
-export type Web3Ethers = ReturnType<typeof useWeb3React> & {
-  library?: Web3Provider
-  chainId?: ChainId
-  activateBrowserWallet: ActivateBrowserWallet
+type SupportedProviders =
+  | JsonRpcProvider
+  | ExternalProvider
+  | { getProvider: () => MaybePromise<JsonRpcProvider | ExternalProvider>; activate: () => Promise<any> }
+
+/**
+ * @public
+ */
+export type Web3Ethers = {
+  activate: (provider: SupportedProviders) => Promise<void>
+  /**
+   * @deprecated
+   */
+  setError: (error: Error) => void
+  deactivate: () => void
+  connector: undefined
+  chainId?: number
+  account?: null | string
+  error?: Error
+  library?: JsonRpcProvider
+  active: boolean
+  activateBrowserWallet: () => void
+  isLoading: boolean
 }
 
+/**
+ * @public
+ */
 export function useEthers(): Web3Ethers {
-  const result = useWeb3React<Web3Provider>()
+  const {
+    network: { provider: networkProvider, chainId, accounts, errors },
+    deactivate,
+    activate,
+    activateBrowserWallet,
+    isLoading,
+  } = useNetwork()
+
   const { networks } = useConfig()
-  const activateBrowserWallet = useCallback<ActivateBrowserWallet>(
-    async (onError, throwErrors) => {
-      const injected = new InjectedConnector({ supportedChainIds: networks?.map((network) => network.chainId) })
-      if (onError instanceof Function) {
-        await result.activate(injected, onError, throwErrors)
-      } else {
-        await result.activate(injected, undefined, throwErrors)
-      }
-    },
-    [networks]
+  const supportedChainIds = networks?.map((network) => network.chainId)
+  const isUnsupportedChainId = chainId && supportedChainIds && supportedChainIds.indexOf(chainId) < 0
+  const unsupportedChainIdError = new Error(
+    `Unsupported chain id: ${chainId}. Supported chain ids are: ${supportedChainIds}.`
   )
+  unsupportedChainIdError.name = 'UnsupportedChainIdError'
+  const error = isUnsupportedChainId ? unsupportedChainIdError : errors[errors.length - 1]
+
+  const readonlyNetwork = useReadonlyNetwork()
+  const provider = networkProvider ?? (readonlyNetwork?.provider as JsonRpcProvider)
+
+  const result = {
+    connector: undefined,
+    library: provider,
+    chainId: isUnsupportedChainId ? undefined : networkProvider !== undefined ? chainId : readonlyNetwork?.chainId,
+    account: accounts[0],
+    active: !!provider,
+    activate: async (providerOrConnector: SupportedProviders) => {
+      if ('getProvider' in providerOrConnector) {
+        console.warn('Using web3-react connectors is deprecated and may lead to unexpected behavior.')
+        await providerOrConnector.activate()
+        return activate(await providerOrConnector.getProvider())
+      }
+      return activate(providerOrConnector)
+    },
+    deactivate,
+
+    setError: () => {
+      throw new Error('setError is deprecated')
+    },
+
+    error,
+    isLoading,
+  }
+
   return { ...result, activateBrowserWallet }
 }

@@ -3,6 +3,9 @@ import { FullConfig, Config, Chain } from '../../constants'
 import { DEFAULT_CONFIG } from '../../model/config/default'
 import { getChainById } from '../../helpers/chain'
 
+/**
+ * @internal Intended for internal use - use it on your own risk
+ */
 export const ConfigContext = createContext<{ config: FullConfig; updateConfig: (config: Config) => void }>({
   config: DEFAULT_CONFIG,
   updateConfig: () => undefined,
@@ -15,6 +18,9 @@ const validConfigs = (configs: FullConfig): FullConfig | Record<string, never> =
   return configs
 }
 
+/**
+ * @public
+ */
 export function useConfig() {
   const { config } = useContext(ConfigContext)
 
@@ -31,6 +37,9 @@ export function useConfig() {
   return validConfigs(config)
 }
 
+/**
+ * @public
+ */
 export function useUpdateConfig() {
   const { updateConfig } = useContext(ConfigContext)
   return updateConfig

@@ -1,13 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Mainnet, DAppProvider } from '@usedapp/core'
+import { Mainnet, DAppProvider, Ropsten, Kovan, Config, Arbitrum } from '@usedapp/core'
 import { App } from './App'
+import { getDefaultProvider } from 'ethers'
 
-const config = {
+const config: Config = {
   readOnlyChainId: Mainnet.chainId,
   readOnlyUrls: {
-    [Mainnet.chainId]: 'https://mainnet.infura.io/v3/3165a249c65f4198bf57200109b8fadf',
+    [Mainnet.chainId]: getDefaultProvider('mainnet'),
+    [Ropsten.chainId]: getDefaultProvider('ropsten'),
+    [Kovan.chainId]: getDefaultProvider('kovan'),
+    [Arbitrum.chainId]: 'https://arb1.arbitrum.io/rpc',
   },
+  multicallVersion: 2 as const,
 }
 
 ReactDOM.render(

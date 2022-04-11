@@ -1,5 +1,130 @@
 # @usedapp/core
 
+## 0.12.8
+
+### Patch Changes
+
+- e2d9950: Handle different cases of addresses
+- 2d7b1ec: Memoize calldata encoding
+- 0fd73d1: Export readonly networks provider from internal exports
+- 7d4d28b: Optimize getUniqueCalls usage
+
+## 0.12.7
+
+### Patch Changes
+
+- 51377cf: Remove `getAddress` calls due to performance issues
+
+## 0.12.6
+
+### Patch Changes
+
+- 77bb213: Correctly memoize hook results in useContractCalls
+
+## 0.12.5
+
+### Patch Changes
+
+- 42b1652: Make exports from testing and internal point to compiled code
+
+## 0.12.4
+
+### Patch Changes
+
+- fcd1642: Correctly read `chainId` in read-only mode without browser wallet
+- 93967af: Move parts that should be private in @usedapp/core to internal submodule
+- fe1e418: Add `isLoading` to `useEthers` and refactor chainId resolution
+- def0d9c: Properly merge default and supplied configs
+
+## 0.12.3
+
+### Patch Changes
+
+- 30bffcc: Fix queries not working in readonly mode
+
+## 0.12.2
+
+### Patch Changes
+
+- df1adcc: Add support to pass providers in the config
+
+## 0.12.1
+
+### Patch Changes
+
+- 9aefc1d: Fixed pnpm lockfile.
+
+## 0.12.0
+
+### Minor Changes
+
+- 378177c: Fetching state from multiple chains simultaneously
+- e9907a5: Add support for wallet-connect provider
+
+### Patch Changes
+
+- 42e1adc: 🔧 Add typed contract calls
+- ca55dd0: Explicitly export public symbols.
+- d70b866: Review public API and add annotations to public symbols
+- ad021b0: Use pnpm instead of yarn
+
+## 0.11.0
+
+### Minor Changes
+
+- 0029496: Change Metamask connection logic when page is loaded
+
+### Patch Changes
+
+- 3d1ec30: Add sourcemaps to published package
+
+## 0.10.1
+
+### Patch Changes
+
+- a07b14f: 📧 Add useChainMeta hook to get chain metadata from ChainID
+- 9f8ce66: Add Palm Testnet support
+
+## 0.10.0
+
+### Minor Changes
+
+- fd8e924: Remove @web3-react dependency, introduce own way of provider management
+
+### Patch Changes
+
+- c70a76e: Support EIP-1193 providers and legacy web3-react connectors
+
+## 0.9.1
+
+### Patch Changes
+
+- b6fe5e1: Add the Oasis Emerald network
+- 34ba891: Add missing documentation for TransactionStatus
+- d04c8bb: Add the moonbeam network
+
+## 0.9.0
+
+### Minor Changes
+
+- 26a4314: Add resetState function to useContractFunction and useSendTransaction so the UI can be reset easily after a transaction attempt.
+
+### Patch Changes
+
+- 3015cbd: Replace polygon explorer to polyscan
+
+## 0.8.0
+
+### Minor Changes
+
+- 33ade3b: Add PendingSignature TransactionState for transactions that are pending signature. This gets set on each new transaction function call and clears out the previous error when new attempts are made.
+- ece010c: Support Node LTS v14 and v16, abandon v10 and v12
+
+### Patch Changes
+
+- 1c257ce: Use isLocalChain Chain property instead of function
+- e5f0951: Add multicall2 function
+
 ## 0.7.3
 
 ### Patch Changes
@@ -193,7 +318,7 @@
 
   "resolutions": {
   "@ethersproject/abi": "5.2.0",
-  "@ethersproject/contracts": "5.2.0"
+  "@ethersproject/contracts": "^5.6.0"
   }
 
 ## 0.3.21
